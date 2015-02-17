@@ -55,10 +55,23 @@ public class Notifier {
         }
     }
     
+    public void notifyObservers(Event event) {
+        synchronized (this.observers) {
+            for (Observer o : this.observers) {
+                o.onNotify(event);
+            }
+        }
+    }
+    
     public void notifyObservers(String event) {
-        synchronized (lock) {
-            for (Observer o : observers) {
-                o.onNotify(new Event(owner, event));
+        synchronized (this.observers) {
+            notifyObservers(event, null);
+        }
+    }
+    public void notifyObservers(String event, Object message) {
+        synchronized (this.observers) {
+            for (Observer o : this.observers) {
+                o.onNotify(new Event(owner, event, message));
             }
         }
     }

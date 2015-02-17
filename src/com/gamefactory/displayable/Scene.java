@@ -2,6 +2,7 @@ package com.gamefactory.displayable;
 
 import com.gamefactory.displayable.gameobjects.Hero;
 import com.gamefactory.game.Displayable;
+import com.gamefactory.utils.events.Observer;
 import java.awt.Graphics;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -52,6 +53,12 @@ public class Scene implements Displayable {
             GameObject next = it.next();
             next.render(g);
         }
+    }
+    
+    
+    public void register(Observer observer, String subject) {
+        GameObject subjectObject = this.gameObjects.get(subject);
+        subjectObject.getNotifier().registerObserver(observer);
     }
 
 }

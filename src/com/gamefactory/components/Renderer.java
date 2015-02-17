@@ -28,6 +28,7 @@ public class Renderer extends Component {
         this.image = image;
         this.position.setHeight(this.image.getHeight());
         this.position.setWidth(this.image.getWidth());
+        this.getNotifier();
     }
 
     public Position getPosition() {

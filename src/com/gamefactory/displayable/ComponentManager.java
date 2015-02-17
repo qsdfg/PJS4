@@ -1,5 +1,7 @@
 package com.gamefactory.displayable;
 
+import com.gamefactory.utils.events.Event;
+import com.gamefactory.utils.events.Observer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -15,7 +17,7 @@ import java.util.List;
  *
  * @since 1.0
  */
-public class ComponentManager {
+public class ComponentManager implements Observer {
 
     private final GameObject owner;
     private final List<Component> components;
@@ -141,4 +143,23 @@ public class ComponentManager {
         }
         return false;
     }
+
+    /* Devrait passer par un notifier mais permet d'éviter un niveau inutile
+     * d'indirection même si on ne devrait pas appeler la méthode onNotify directement...  
+     */
+    
+    @Override
+    public void onNotify(Event event) {
+        Iterator<Component> itComponent = this.components.iterator();
+        while (itComponent.hasNext()) {
+            itComponent.next().onNotify(event);
+        }
+
+        Iterator<Script> itScript = this.scripts.iterator();
+        while (itScript.hasNext()) {
+            itScript.next().onNotify(event);
+        }
+    }
+    
+    
 }

@@ -1,6 +1,8 @@
 package com.gamefactory.displayable;
 
 import com.gamefactory.game.Displayable;
+import com.gamefactory.utils.events.Notifier;
+import com.gamefactory.utils.events.Subject;
 import java.awt.Graphics;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
@@ -15,7 +17,7 @@ import java.util.logging.Logger;
  *
  * @since 1.0
  */
-public abstract class GameObject implements Displayable {
+public abstract class GameObject implements Displayable, Subject {
 
     /**
      * Encapsulation de l'ensemble des components du Game Object
@@ -26,6 +28,8 @@ public abstract class GameObject implements Displayable {
 
     protected final String id;
 
+    private final Notifier notifier;
+
     /**
      * Flag indiquant si le Game Object doit call update et render. Utile pour
      * le pattern object pool qui consiste a avoir une liste d'objets
@@ -34,20 +38,22 @@ public abstract class GameObject implements Displayable {
      * - Pascal Luttgens.
      */
     private boolean isActive;
-    
+
     protected Scene scene;
 
     public GameObject() {
         this.componentManager = new ComponentManager(this);
         this.isActive = true;
-        this.id = this.getClass().getSimpleName();
+        this.id = this.getClass().getSimpleName().toUpperCase();
+        this.notifier = new Notifier(this);
         init();
     }
 
     protected GameObject(String id) {
         this.componentManager = new ComponentManager(this);
         this.isActive = true;
-        this.id = id;
+        this.id = id.toUpperCase();
+        this.notifier = new Notifier(this);
         init();
     }
 
@@ -61,7 +67,15 @@ public abstract class GameObject implements Displayable {
      * - Pascal Luttgens.
      */
     public abstract void init();
+
+    public String getId() {
+        return this.id;
+    }
     
+    public ComponentManager getComponentManager() {
+        return componentManager;
+    }
+
     public void setScene(Scene scene) {
         this.scene = scene;
     }
@@ -70,6 +84,11 @@ public abstract class GameObject implements Displayable {
         return this.scene;
     }
     
+    @Override
+    public Notifier getNotifier() {
+        return this.notifier;
+    }
+
     /**
      * Vérifie que le GameObject est actif avant de procéder à l'update.
      *
